@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{D38BC328-24D4-47FA-BEEA-2B055FD0D920}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserDefinedFieldsAndTables", "UserDefinedFieldsAndTables\UserDefinedFieldsAndTables.csproj", "{89A5EA03-57E9-46A2-AFC2-34B54B425703}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{89A5EA03-57E9-46A2-AFC2-34B54B425703}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89A5EA03-57E9-46A2-AFC2-34B54B425703}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89A5EA03-57E9-46A2-AFC2-34B54B425703}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89A5EA03-57E9-46A2-AFC2-34B54B425703}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
