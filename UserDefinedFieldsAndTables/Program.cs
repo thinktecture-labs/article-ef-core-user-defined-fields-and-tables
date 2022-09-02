@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using UserDefinedFieldsAndTables;
 using UserDefinedFieldsAndTables.Database;
@@ -14,9 +15,22 @@ var serviceProvider = new ServiceCollection()
                       .BuildServiceProvider();
 
 await ReCreateDatabaseAndFetchProductsAsync(serviceProvider);
-await ChangeModelAsync(serviceProvider);
+var oldCacheKey = await ChangeModelAsync(serviceProvider);
 await AccessDescriptionAsync(serviceProvider);
 await AccessProductTypeAsync(serviceProvider);
+
+// X hours later...
+await CleanUpEfCache(serviceProvider, oldCacheKey);
+
+static async Task CleanUpEfCache(ServiceProvider provider, object oldCacheKey)
+{
+   await using var scope = provider.CreateAsyncScope();
+
+   var dbContext = scope.ServiceProvider.GetRequiredService<DemoDbContext>();
+
+   var efCache = dbContext.GetService<IMemoryCache>();
+   efCache.Remove(oldCacheKey);
+}
 
 static async Task AccessProductTypeAsync(ServiceProvider provider)
 {
@@ -66,12 +80,14 @@ static async Task AccessDescriptionAsync(ServiceProvider provider)
    Console.WriteLine(description);
 }
 
-static async Task ChangeModelAsync(ServiceProvider provider)
+static async Task<object> ChangeModelAsync(ServiceProvider provider)
 {
    await using var scope = provider.CreateAsyncScope();
 
    var dbContext = scope.ServiceProvider.GetRequiredService<DemoDbContext>();
    var metamodel = scope.ServiceProvider.GetRequiredService<Metamodel>();
+
+   var cacheKey = dbContext.GetService<IModelCacheKeyFactory>().Create(dbContext, false);
 
    metamodel.Version++;
 
@@ -126,6 +142,8 @@ SET Description = 'Product description';
 INSERT INTO ProductTypes (Id, Name)
 VALUES ('5B3F23F9-9D97-42A2-99F2-1D19710E6690', 'ProductType');
 ");
+
+   return cacheKey;
 }
 
 static async Task ReCreateDatabaseAndFetchProductsAsync(ServiceProvider provider)
