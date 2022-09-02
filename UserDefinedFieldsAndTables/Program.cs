@@ -1,12 +1,16 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using UserDefinedFieldsAndTables;
 using UserDefinedFieldsAndTables.Database;
 
 var connString = "server=localhost;database=UserDefinedFieldsAndTables;integrated security=true";
 
 var serviceProvider = new ServiceCollection()
-                      .AddDbContext<DemoDbContext>(builder => builder.UseSqlServer(connString))
+                      .AddSingleton<Metamodel>()
+                      .AddDbContext<DemoDbContext>(builder => builder.UseSqlServer(connString)
+                                                                     .ReplaceService<IModelCacheKeyFactory, MetamodelAwareCacheKeyFactory>())
                       .BuildServiceProvider();
 
 await ReCreateDatabaseAndFetchProductsAsync(serviceProvider);
