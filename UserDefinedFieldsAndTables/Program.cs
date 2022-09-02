@@ -155,13 +155,10 @@ static async Task ReCreateDatabaseAndFetchProductsAsync(ServiceProvider provider
    await dbContext.Database.EnsureDeletedAsync();
    await dbContext.Database.EnsureCreatedAsync();
 
-   if (!dbContext.Products.Any())
-   {
-      var id = new Guid("3CB4A79E-17DF-4F3F-8A5F-62561153E789");
-      dbContext.Products.Add(new Product(id, "Product"));
+   var id = new Guid("3CB4A79E-17DF-4F3F-8A5F-62561153E789");
+   dbContext.Products.Add(new Product(id, "Product"));
 
-      await dbContext.SaveChangesAsync();
-   }
+   await dbContext.SaveChangesAsync();
 
    var products = await dbContext.Products.ToListAsync();
    Console.WriteLine(JsonSerializer.Serialize(products));
