@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Caching.Memory;
@@ -6,11 +7,15 @@ using Microsoft.Extensions.DependencyInjection;
 using UserDefinedFieldsAndTables;
 using UserDefinedFieldsAndTables.Database;
 
-var connString = "server=localhost;database=UserDefinedFieldsAndTables;integrated security=true";
+var connStringBuilder = new SqliteConnectionStringBuilder
+{
+    DataSource = "UserDefinedFieldsAndTables.sqlite",
+    ForeignKeys = true
+};
 
 var serviceProvider = new ServiceCollection()
                       .AddSingleton<Metamodel>()
-                      .AddDbContext<DemoDbContext>(builder => builder.UseSqlServer(connString)
+                      .AddDbContext<DemoDbContext>(builder => builder.UseSqlite(connStringBuilder.ConnectionString)
                                                                      .ReplaceService<IModelCacheKeyFactory, MetamodelAwareCacheKeyFactory>())
                       .BuildServiceProvider();
 
